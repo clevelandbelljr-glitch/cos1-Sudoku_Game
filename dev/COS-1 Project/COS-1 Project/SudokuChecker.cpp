@@ -1,6 +1,6 @@
 #include "SudokuChecker.h"
 
-bool SudokuChecker::isValidMove(SudokuBoard& board, int row, int col, int number)
+bool SudokuChecker::isValidMove(const SudokuBoard& board, int row, int col, int number) const
 {
     if (row < 0 || row >= 9 || col < 0 || col >= 9)
     {
@@ -33,7 +33,7 @@ bool SudokuChecker::isValidMove(SudokuBoard& board, int row, int col, int number
 
     for (int r = startRow; r < startRow + 3; r++)
     {
-        for (int c = startCol; c <startCol + 3; c++)
+        for (int c = startCol; c < startCol + 3; c++)
 
             if ((r != row || c != col) && board.getCell(r, c) == number)
             {
@@ -44,7 +44,7 @@ bool SudokuChecker::isValidMove(SudokuBoard& board, int row, int col, int number
     return true;
 }
 
-bool SudokuChecker::isBoardCompleted(SudokuBoard& board)
+bool SudokuChecker::isBoardCompleted(const SudokuBoard& board) const
 {
 
     for (int row = 0; row < 9; row++)
@@ -58,7 +58,7 @@ bool SudokuChecker::isBoardCompleted(SudokuBoard& board)
                 return false;
             }
 
-            for (int c = col+1; c < 9; c++)
+            for (int c = col + 1; c < 9; c++)
             { 
                 if (board.getCell(row, c) == number)
                 {

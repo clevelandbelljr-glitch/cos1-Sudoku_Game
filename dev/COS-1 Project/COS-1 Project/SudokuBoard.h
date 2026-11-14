@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+class SudokuPuzzle;
+
 class SudokuBoard
 {
 private:
@@ -10,7 +12,7 @@ private:
 public:
 	
 	SudokuBoard();
-	void displayBoard();
-	int getCell(int row, int col);
+	void displayBoard() const;
+	int getCell(int row, int col) const;
 	void setCell(int row, int col, int number);
 };

@@ -1,18 +1,28 @@
-#include "SudokuBoard.h"
 #include <iostream>
+#include "SudokuBoard.h"
+
+
 SudokuBoard::SudokuBoard()
 {
-	grid = std::vector<std::vector<int>>(9, std::vector<int>(9.0));
+	grid = std::vector<std::vector<int>>(9, std::vector<int>(9, 0));
 }
 
-void SudokuBoard::displayBoard()
+void SudokuBoard::displayBoard() const
 {
+	std::cout << "\n==== SUDOKU BOARD ====\n";
+	std::cout << ". = Empty cell\n\n";
+		
+
+	std::cout << "    1 2 3   4 5 6   7 8 9\n";
+	
 	for (int row = 0; row < 9; row++)
 	{
 		if (row % 3 == 0)
 		{
-			std::cout << "+-------+-------+-------+\n";
+			std::cout << "  +-------+-------+-------+\n";
 		}
+
+		std::cout << row + 1 << " ";
 
 		for (int col = 0; col < 9; col++)
 		{
@@ -21,16 +31,24 @@ void SudokuBoard::displayBoard()
 				std::cout << "| ";
 			}
 
-			std::cout << grid[row][col] << " ";
+			if (grid[row][col] == 0)
+			{
+				std::cout << ". ";
+			}
+			
+			else
+			{
+				std::cout << grid[row][col] << " ";
+			}
 		}		
 
 		std::cout << "|\n";
 	}
 
-	std::cout << "+-------+-------+-------+\n";
+	std::cout << "  +-------+-------+-------+\n";
 }
 
-int SudokuBoard::getCell(int row, int col)
+int SudokuBoard::getCell(int row, int col) const
 {
 	return grid[row][col];
 }
