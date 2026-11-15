@@ -35,4 +35,10 @@ Week 3 - Testing and Improvements
 	Refactored the createPuzzle() function to reduce repeated code when loading puzzle values and identifying original clues.
 	Tested both Sudoku puzzles after refactoring to confirm they still display correctly.
 	
+Week 4 - Final Development and Review
+	Created three final development issues on the GitHub project board.
+	Updated issue statuses to track final testing and code review.
+	Reviewed the organization and responsibilities of the Sudoku classes.
+	Continued final testing of game features and input validation.
+	Updated the README with the Week 4 final project stand-up.
 		

@@ -60,4 +60,12 @@ Next Steps: My next goal is to continue reviewing and improving my code, complet
 
 ### Week 4
 
-My final stand up...
+Overview: This week I focused on finalizing my Sudoku Game with Checker Assistant. I reviewed the features, tested the program, and updated my GitHub project board.
+
+Improvements: I reviewed my code organization, checked the responsibilities of each class, and continued testing the menu, input validation, puzzle reset, and Save/Load features.
+
+Challenges: One challenge was making sure all the features worked together correctly. I also reviewed how the game handles invalid input and conflicting numbers.
+
+Testing: I tested the main game features and verified that the program builds successfully. I also captured screenshots to document the game.
+
+Next Steps: My final steps are to complete the code review, address any remaining bugs, update my documentation, and create and merge my final Pull Request from dev into main.
