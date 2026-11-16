@@ -57,7 +57,7 @@ void SudokuPuzzle::createPuzzle(SudokuBoard& board, int puzzleChoice)
 				number = puzzle[row][col];
 			}
 
-			else if (puzzleChoice == 1 )
+			else if (puzzleChoice == 1)
 			{
 				number = puzzle2[row][col];
 			}
@@ -136,7 +136,10 @@ bool SudokuPuzzle::loadPuzzle(SudokuBoard& board, int& puzzleChoice)
 	}
 
 	SudokuBoard originalBoard;
-	createPuzzle(originalBoard, savedChoice);
+	SudokuPuzzle originalPuzzle;
+	originalPuzzle.createPuzzle(originalBoard, savedChoice);
+
+	int savedGrid[9][9];
 
 	for (int row = 0; row < 9; row++)
 	{
@@ -154,7 +157,22 @@ bool SudokuPuzzle::loadPuzzle(SudokuBoard& board, int& puzzleChoice)
 				return false;
 			}
 
-			board.setCell(row, col, number);
+			if (originalPuzzle.isFixed(row, col) && number != originalBoard.getCell(row, col))
+			{
+				return false;
+			}
+
+			savedGrid[row][col] = number;
+		}
+	}
+
+	createPuzzle(board, savedChoice);
+
+	for (int row = 0; row < 9; row++)
+	{
+		for (int col = 0; col < 9; col++)
+		{
+			board.setCell(row, col, savedGrid[row][col]);
 		}
 	}
 

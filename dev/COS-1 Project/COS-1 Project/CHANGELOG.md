@@ -40,6 +40,13 @@ Week 4 - Final Development and Review
 	Updated random puzzle selection to choose from three puzzles.
 	Updated Save and Load validation to support the third puzzle.
 	Tested the third puzzle, including Reset, Save, and Load.
+	Improved loadPuzzle() to verify saved values against original puzzle clues.
+	Added protection against modified save files that attempt to change original clues.
+	Tested the protection by modifying an original clue in the save file and confirming that the game rejected it.
+	Verified that Option 3 uses isBoardCompleted() to check whether the Sudoku puzzle is solved.
+	Updated loadPuzzle() to validate all saved values before changing the active board or locked cells.
+	Tested that an invalid save file is rejected without disrupting the active game.
+	Verified that normal Save and Load functionality still works after the changes.
 	Created three final development issues on the GitHub project board.
 	Updated issue statuses to track final testing and code review.
 	Reviewed the organization and responsibilities of the Sudoku classes.

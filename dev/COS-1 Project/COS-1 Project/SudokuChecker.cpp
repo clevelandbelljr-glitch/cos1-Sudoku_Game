@@ -34,11 +34,13 @@ bool SudokuChecker::isValidMove(const SudokuBoard& board, int row, int col, int 
     for (int r = startRow; r < startRow + 3; r++)
     {
         for (int c = startCol; c < startCol + 3; c++)
+        {
 
             if ((r != row || c != col) && board.getCell(r, c) == number)
             {
                 return false;
             }
+        }
     }
 
     return true;
