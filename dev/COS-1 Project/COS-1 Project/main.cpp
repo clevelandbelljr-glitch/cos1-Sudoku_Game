@@ -56,7 +56,7 @@ int main()
 
     SudokuPuzzle puzzle;
 
-    int puzzleChoice = rand() % 2;
+    int puzzleChoice = rand() % 3;
     puzzle.createPuzzle(board, puzzleChoice);
     
     std::cout << "Welcome to Sudoku Game.\n";

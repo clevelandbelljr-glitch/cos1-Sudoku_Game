@@ -31,6 +31,19 @@ void SudokuPuzzle::createPuzzle(SudokuBoard& board, int puzzleChoice)
 		{ 0,0,0,3,0,6,0,9,0 }
 	};
 
+	int puzzle3[9][9] =
+	{
+		{ 0,0,0,2,6,0,7,0,1 },
+		{ 6,8,0,0,7,0,0,9,0 },
+		{ 1,9,0,0,0,4,5,0,0 },
+		{ 8,2,0,1,0,0,0,4,0 },
+		{ 0,0,4,6,0,2,9,0,0 },
+		{ 0,5,0,0,0,3,0,2,8 },
+		{ 0,0,9,3,0,0,0,7,4 },
+		{ 0,4,0,0,5,0,0,3,6 },
+		{ 7,0,3,0,1,8,0,0,0 }
+	};
+
 	fixedCells = std::vector<std::vector<bool>>(9, std::vector<bool>(9, false));
 
 	for (int row = 0; row < 9; row++)
@@ -44,9 +57,14 @@ void SudokuPuzzle::createPuzzle(SudokuBoard& board, int puzzleChoice)
 				number = puzzle[row][col];
 			}
 
-			else
+			else if (puzzleChoice == 1 )
 			{
 				number = puzzle2[row][col];
+			}
+
+			else
+			{
+				number = puzzle3[row][col];
 			}
 
 			board.setCell(row, col, number);
@@ -112,7 +130,7 @@ bool SudokuPuzzle::loadPuzzle(SudokuBoard& board, int& puzzleChoice)
 	int savedChoice;
 	file >> savedChoice;
 
-	if (!file || savedChoice < 0 || savedChoice > 1)
+	if (!file || savedChoice < 0 || savedChoice > 2)
 	{
 		return false;
 	}
