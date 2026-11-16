@@ -62,7 +62,7 @@ Next Steps: My next goal is to continue reviewing and improving my code, complet
 
 Overview: This week I focused on finalizing my Sudoku Game with Checker Assistant. I reviewed the features, tested the program, and updated my GitHub project board.
 
-Improvements: I reviewed my code organization, checked the responsibilities of each class, and continued testing the menu, input validation, puzzle reset, and Save/Load features.
+Improvements: I added a third Sudoku puzzle and tested random selection, Reset, Save, and load. I reviewed my code organization, checked the responsibilities of each class, and continued testing the menu, input validation, puzzle reset, and Save/Load features.
 
 Challenges: One challenge was making sure all the features worked together correctly. I also reviewed how the game handles invalid input and conflicting numbers.
 
