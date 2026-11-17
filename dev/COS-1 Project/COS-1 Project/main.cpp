@@ -56,7 +56,7 @@ int main()
 
     SudokuPuzzle puzzle;
 
-    int puzzleChoice = rand() % 2;
+    int puzzleChoice = rand() % 3;
     puzzle.createPuzzle(board, puzzleChoice);
     
     std::cout << "Welcome to Sudoku Game.\n";
@@ -204,7 +204,7 @@ int main()
 
             else
             {
-                std::cout << "No saved game found of file is invalid.\n";
+                std::cout << "No saved game found or file is invalid.\n";
             }
         }
         
