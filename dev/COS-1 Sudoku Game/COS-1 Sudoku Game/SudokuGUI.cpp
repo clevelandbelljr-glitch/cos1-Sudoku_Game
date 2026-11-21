@@ -1,8 +1,27 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <cstdlib>
+#include <string>
+#include "SudokuBoard.h"
+#include "SudokuChecker.h"
+#include "SudokuPuzzle.h"
 
 int main()
 {
+	SudokuBoard board;
+	SudokuChecker checker;
+	SudokuPuzzle puzzle;
+
+	int puzzleChoice = rand() % 3;
+	puzzle.createPuzzle(board, puzzleChoice);
+	
+	sf::Font font;
+	
+	if (!font.openFromFile("arial.ttf"))
+	{
+		return -1;
+	}
+
 	sf::RenderWindow window(sf::VideoMode({ 800u, 800u }), "Sudoku Game");
 
 	const float cellSize = 70.0f;
@@ -22,6 +41,27 @@ int main()
 		}
 
 		window.clear(sf::Color(240, 240, 240));
+
+		for (int row = 0; row < 9; row++)
+		{
+			for (int col = 0; col < 9; col++)
+			{
+				int number = board.getCell(row, col);
+
+				if (number != 0)
+				{
+					sf::Text text(font, std::to_string(number), 32);
+
+					text.setFillColor(sf::Color::Black);
+
+					text.setPosition(sf::Vector2f(startX + col * cellSize + 24, startY + row * cellSize + 16));
+
+					window.draw(text);
+				}
+				
+			}
+			
+		}
 
 		for (int i = 0; i <= 9; i++)
 		{
