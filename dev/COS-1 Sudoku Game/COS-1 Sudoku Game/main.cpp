@@ -3,9 +3,11 @@
 #include <stdexcept>
 #include <ctime>
 #include <cstdlib>
+#include <SFML/Graphics.hpp>
 #include "SudokuBoard.h"
 #include "SudokuChecker.h"
 #include "SudokuPuzzle.h"
+
 
 int getIntegerInput(const std::string& prompt)
 {
