@@ -30,6 +30,9 @@ int main()
 	const float startX = (800.0f - boardSize) / 2;
 	const float startY = (800.0f - boardSize) / 2;
 
+	int selectedRow = -1;
+	int selectedCol = -1;
+
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())
@@ -38,9 +41,35 @@ int main()
 			{
 				window.close();
 			}
+
+			if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
+			{
+				int mouseX = mousePressed->position.x;
+				int mouseY = mousePressed->position.y;
+
+				selectedCol = static_cast<int>((mouseX - startX) / cellSize);
+				selectedRow = static_cast<int>((mouseY - startY) / cellSize);
+
+				if (selectedRow < 0 || selectedRow >= 9 || selectedCol < 0 || selectedCol >= 9)
+				{
+					selectedRow = -1;
+					selectedCol = -1;
+				}
+			}
 		}
 
 		window.clear(sf::Color(240, 240, 240));
+
+		if (selectedRow != -1 && selectedCol != -1)
+		{
+			sf::RectangleShape highlight(sf::Vector2f(cellSize, cellSize));
+
+			highlight.setPosition(sf::Vector2f(startX + selectedCol * cellSize, startY + selectedRow * cellSize));
+
+			highlight.setFillColor(sf::Color(173, 216, 239));
+
+			window.draw(highlight);
+		}
 
 		for (int row = 0; row < 9; row++)
 		{
