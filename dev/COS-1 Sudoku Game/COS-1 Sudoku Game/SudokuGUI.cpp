@@ -77,6 +77,14 @@ int main()
 					}
 				}
 
+				if (keyPressed->code == sf::Keyboard::Key::Delete || keyPressed->code == sf::Keyboard::Key::Backspace)
+				{
+					if (!puzzle.isFixed(selectedRow, selectedCol))
+					{
+						board.setCell(selectedRow, selectedCol, 0);
+					}
+				}
+
 			}
 		}
 
