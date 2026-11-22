@@ -76,6 +76,11 @@ int main()
 						{
 							board.setCell(selectedRow, selectedCol, number);
 							gameMessage = "Move accepted.";
+
+							if (checker.isBoardCompleted(board))
+							{
+								gameMessage = "You completed the game! Hip, Hip, Hurray!! You did it!!!!";
+							}
 						}
 
 						else
