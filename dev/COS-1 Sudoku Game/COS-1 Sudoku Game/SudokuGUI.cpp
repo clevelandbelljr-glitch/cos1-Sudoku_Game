@@ -61,6 +61,14 @@ int main()
 
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
+				if (keyPressed->code == sf::Keyboard::Key::R)
+				{
+					puzzle.createPuzzle(board, puzzleChoice);
+					selectedRow = -1;
+					selectedCol = -1;
+					gameMessage = "Puzzle reset.";
+				}
+
 				int number = -1;
 
 				if (keyPressed->code >= sf::Keyboard::Key::Num1 && keyPressed->code <= sf::Keyboard::Key::Num9)
