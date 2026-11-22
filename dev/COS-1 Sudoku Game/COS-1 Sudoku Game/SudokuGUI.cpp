@@ -56,6 +56,28 @@ int main()
 					selectedCol = -1;
 				}
 			}
+
+			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+			{
+				int number = -1;
+
+				if (keyPressed->code >= sf::Keyboard::Key::Num1 && keyPressed->code <= sf::Keyboard::Key::Num9)
+				{
+					number = static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num1) + 1;
+				}
+
+				if (number != -1 && selectedRow != -1 && selectedCol != -1)
+				{
+					if (!puzzle.isFixed(selectedRow, selectedCol))
+					{
+						if (checker.isValidMove(board, selectedRow, selectedCol, number))
+						{
+							board.setCell(selectedRow, selectedCol, number);
+						}
+					}
+				}
+
+			}
 		}
 
 		window.clear(sf::Color(240, 240, 240));
