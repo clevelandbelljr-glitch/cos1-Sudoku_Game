@@ -33,6 +33,8 @@ int main()
 	int selectedRow = -1;
 	int selectedCol = -1;
 
+	std::string gameMessage = "Select a cell and enter a number.";
+
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())
@@ -73,7 +75,18 @@ int main()
 						if (checker.isValidMove(board, selectedRow, selectedCol, number))
 						{
 							board.setCell(selectedRow, selectedCol, number);
+							gameMessage = "Move accepted.";
 						}
+
+						else
+						{
+							gameMessage = "Invalid move. Pick another number.";
+						}
+					}
+
+					else
+					{
+						gameMessage = "Original clue cannot be changed.";
 					}
 				}
 
@@ -140,6 +153,14 @@ int main()
 			horizontalLine.setFillColor(sf::Color::Black);
 			window.draw(horizontalLine);
 		}
+
+		sf::Text messageText(font, gameMessage, 20);
+
+		messageText.setFillColor(sf::Color::Black);
+
+		messageText.setPosition(sf::Vector2f(100, 750));
+
+		window.draw(messageText);
 
 		window.display();
 	}
