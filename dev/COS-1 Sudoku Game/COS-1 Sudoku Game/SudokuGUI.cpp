@@ -69,6 +69,28 @@ int main()
 					gameMessage = "Puzzle reset.";
 				}
 
+				if (keyPressed->code == sf::Keyboard::Key::S)
+				{
+					puzzle.savePuzzle(board, puzzleChoice);
+					gameMessage = "Game saved successfully.";
+				}
+
+				if (keyPressed->code == sf::Keyboard::Key::L)
+				{
+					if (puzzle.loadPuzzle(board, puzzleChoice))
+					{
+						gameMessage = "Game loaded successfully.";
+						selectedRow = -1;
+						selectedCol = -1;
+					}
+
+					else
+					{
+						gameMessage = "No saved game found or fail to load game.";
+					}
+					
+				}
+
 				int number = -1;
 
 				if (keyPressed->code >= sf::Keyboard::Key::Num1 && keyPressed->code <= sf::Keyboard::Key::Num9)
