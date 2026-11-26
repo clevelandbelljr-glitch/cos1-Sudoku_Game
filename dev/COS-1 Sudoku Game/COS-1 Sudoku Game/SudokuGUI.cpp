@@ -131,10 +131,15 @@ int main()
 
 				if (keyPressed->code == sf::Keyboard::Key::Delete || keyPressed->code == sf::Keyboard::Key::Backspace)
 				{
-					if (!puzzle.isFixed(selectedRow, selectedCol))
+					if (selectedRow != -1 && selectedCol != -1)
 					{
-						board.setCell(selectedRow, selectedCol, 0);
+						if (!puzzle.isFixed(selectedRow, selectedCol))
+						{
+							board.setCell(selectedRow, selectedCol, 0);
+							gameMessage = "Cell erased.";
+						}
 					}
+					
 				}
 
 			}
@@ -163,7 +168,15 @@ int main()
 				{
 					sf::Text text(font, std::to_string(number), 32);
 
-					text.setFillColor(sf::Color::Black);
+					if (puzzle.isFixed(row, col))
+					{
+						text.setFillColor(sf::Color::Black);
+					}
+					else
+					{
+						text.setFillColor(sf::Color::Blue);
+					}
+					
 
 					text.setPosition(sf::Vector2f(startX + col * cellSize + 24, startY + row * cellSize + 16));
 
@@ -197,12 +210,15 @@ int main()
 
 		messageText.setFillColor(sf::Color::Black);
 
-		messageText.setPosition(sf::Vector2f(100, 790));
+		messageText.setOrigin(messageText.getLocalBounds().getCenter());
+
+		messageText.setPosition(sf::Vector2f(400, 790));
 
 		window.draw(messageText);
 
 		sf::Text controlsText(font, "R = Reset | S = Save | L = Load | Delete = Erase", 20);
-		controlsText.setPosition({ 100.f, 830.f });
+		controlsText.setOrigin(controlsText.getLocalBounds().getCenter());
+		controlsText.setPosition({ 400.f, 830.f });
 		controlsText.setFillColor(sf::Color::Blue);
 
 		window.draw(controlsText);
