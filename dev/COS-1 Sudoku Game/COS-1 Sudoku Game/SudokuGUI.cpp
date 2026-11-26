@@ -17,25 +17,44 @@ int main()
 
 	//int puzzleChoice = rand() % 3;
 	//puzzle.createPuzzle(board, puzzleChoice);
-	int puzzleChoice = 0;
+	int puzzleChoice = -1;
 
-	if (!puzzle.generateCompleteBoard(board, puzzleChoice))
-	{
-		return -1;
-	}
-
-	puzzle.removeNumbers(board, puzzleChoice);
+	bool showDifficultyScreen = true;
 
 	SudokuBoard startingBoard = board;
 
 	sf::Font font;
-	
+
 	if (!font.openFromFile("arial.ttf"))
 	{
 		return -1;
 	}
 
 	sf::RenderWindow window(sf::VideoMode({ 800u, 900u }), "Sudoku Game");
+
+	sf::RectangleShape easyButton(sf::Vector2f(180.f, 60.f));
+	easyButton.setPosition({ 100.f, 500.f });
+	easyButton.setFillColor(sf::Color(100, 180, 100));
+
+	sf::RectangleShape mediumButton(sf::Vector2f(180.f, 60.f));
+	mediumButton.setPosition({ 310.f, 500.f });
+	mediumButton.setFillColor(sf::Color(100, 149, 237));
+
+	sf::RectangleShape hardButton(sf::Vector2f(180.f, 60.f));
+	hardButton.setPosition({ 520.f, 500.f });
+	hardButton.setFillColor(sf::Color(220, 100, 100));
+
+	sf::Text easyText(font, "Easy", 24);
+	easyText.setFillColor(sf::Color::White);
+	easyText.setPosition({ 160.f, 515.f });
+
+	sf::Text mediumText(font, "Medium", 24);
+	mediumText.setFillColor(sf::Color::White);
+	mediumText.setPosition({ 345.f, 515.f });
+
+	sf::Text hardText(font, "Hard", 24);
+	hardText.setFillColor(sf::Color::White);
+	hardText.setPosition({ 580.f, 515.f });
 
 	const float cellSize = 70.0f;
 	const float boardSize = cellSize * 9;
@@ -47,7 +66,7 @@ int main()
 	int selectedCol = -1;
 
 	std::string gameMessage = "Select a cell and enter a number.";
-	
+
 
 	while (window.isOpen())
 	{
@@ -63,46 +82,111 @@ int main()
 				int mouseX = mousePressed->position.x;
 				int mouseY = mousePressed->position.y;
 
-				selectedCol = static_cast<int>((mouseX - startX) / cellSize);
-				selectedRow = static_cast<int>((mouseY - startY) / cellSize);
-
-				if (selectedRow < 0 || selectedRow >= 9 || selectedCol < 0 || selectedCol >= 9)
+				if (showDifficultyScreen)
 				{
-					selectedRow = -1;
-					selectedCol = -1;
+					sf::Vector2f mousePosition(static_cast<float>(mouseX), static_cast<float>(mouseY));
+
+					if (easyButton.getGlobalBounds().contains(mousePosition))
+					{
+						puzzleChoice = 0;
+					}
+					else if (mediumButton.getGlobalBounds().contains(mousePosition))
+					{
+						puzzleChoice = 1;
+					}
+					else if (hardButton.getGlobalBounds().contains(mousePosition))
+					{
+						puzzleChoice = 2;
+					}
+
+					if (puzzleChoice != -1)
+					{
+						if (!puzzle.generateCompleteBoard(board, puzzleChoice))
+						{
+							return -1;
+						}
+
+						puzzle.removeNumbers(board, puzzleChoice);
+						startingBoard = board;
+						showDifficultyScreen = false;
+						gameMessage = "Puzzle started!";
+					}
+				}
+				else
+				{
+					selectedCol = static_cast<int>((mouseX - startX) / cellSize);
+					selectedRow = static_cast<int>((mouseY - startY) / cellSize);
+
+					if (selectedRow < 0 || selectedRow >= 9 || selectedCol < 0 || selectedCol >= 9)
+					{
+						selectedRow = -1;
+						selectedCol = -1;
+					}
 				}
 			}
 
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
-				if (keyPressed->code == sf::Keyboard::Key::R)
+				if (showDifficultyScreen)
 				{
-					board = startingBoard;
-					selectedRow = -1;
-					selectedCol = -1;
-					gameMessage = "Puzzle reset.";
-				}
-
-				if (keyPressed->code == sf::Keyboard::Key::S)
-				{
-					puzzle.savePuzzle(board, startingBoard,puzzleChoice);
-					gameMessage = "Game saved successfully.";
-				}
-
-				if (keyPressed->code == sf::Keyboard::Key::L)
-				{
-					if (puzzle.loadPuzzle(board, startingBoard,puzzleChoice))
+					if (keyPressed->code == sf::Keyboard::Key::Num1)
 					{
-						gameMessage = "Game loaded successfully.";
+						puzzleChoice = 0;
+					}
+					else if (keyPressed->code == sf::Keyboard::Key::Num2)
+					{
+						puzzleChoice = 1;
+					}
+					else if (keyPressed->code == sf::Keyboard::Key::Num3)
+					{
+						puzzleChoice = 2;
+					}
+
+					if (puzzleChoice != -1)
+					{
+						if (!puzzle.generateCompleteBoard(board, puzzleChoice))
+						{
+							return -1;
+						}
+
+						puzzle.removeNumbers(board, puzzleChoice);
+						startingBoard = board;
+						showDifficultyScreen = false;
+						gameMessage = "Puzzle started.";
+					}
+				}
+
+				if (!showDifficultyScreen)
+				{
+					if (keyPressed->code == sf::Keyboard::Key::R)
+					{
+						board = startingBoard;
 						selectedRow = -1;
 						selectedCol = -1;
+						gameMessage = "Puzzle reset.";
 					}
 
-					else
+					if (keyPressed->code == sf::Keyboard::Key::S)
 					{
-						gameMessage = "No saved game found or fail to load game.";
+						puzzle.savePuzzle(board, startingBoard, puzzleChoice);
+						gameMessage = "Game saved successfully.";
 					}
-					
+
+					if (keyPressed->code == sf::Keyboard::Key::L)
+					{
+						if (puzzle.loadPuzzle(board, startingBoard, puzzleChoice))
+						{
+							gameMessage = "Game loaded successfully.";
+							selectedRow = -1;
+							selectedCol = -1;
+						}
+
+						else
+						{
+							gameMessage = "No saved game found or fail to load game.";
+						}
+
+					}
 				}
 
 				int number = -1;
@@ -153,6 +237,36 @@ int main()
 
 		window.clear(sf::Color(240, 240, 240));
 
+		if (showDifficultyScreen)
+		{
+			sf::Text titleText(font, "Sudoku Game", 40);
+			titleText.setFillColor(sf::Color::Black);
+			titleText.setOrigin(titleText.getLocalBounds().getCenter());
+			titleText.setPosition({ 400.f, 250.f });
+			window.draw(titleText);
+
+			sf::Text difficultyText(font, "Choose Your Difficulty", 28);
+			difficultyText.setFillColor(sf::Color::Black);
+			difficultyText.setOrigin(difficultyText.getLocalBounds().getCenter());
+			difficultyText.setPosition({ 400.f, 350.f });
+			window.draw(difficultyText);
+
+			sf::Text choicesText(font, "1 = Easy     2 = Medium     3 = Hard", 24);
+			choicesText.setFillColor(sf::Color::Blue);
+			choicesText.setOrigin(choicesText.getLocalBounds().getCenter());
+			choicesText.setPosition({ 400.f, 450.f });
+			window.draw(choicesText);
+
+			window.draw(easyButton);
+			window.draw(mediumButton);
+			window.draw(hardButton);
+
+			window.draw(easyText);
+			window.draw(mediumText);
+			window.draw(hardText);
+
+		}
+
 		if (selectedRow != -1 && selectedCol != -1)
 		{
 			sf::RectangleShape rowHighlight(sf::Vector2f(boardSize, cellSize));
@@ -181,33 +295,36 @@ int main()
 			window.draw(highlight);
 		}
 
-		for (int row = 0; row < 9; row++)
+		if (!showDifficultyScreen)
 		{
-			for (int col = 0; col < 9; col++)
+			for (int row = 0; row < 9; row++)
 			{
-				int number = board.getCell(row, col);
-
-				if (number != 0)
+				for (int col = 0; col < 9; col++)
 				{
-					sf::Text text(font, std::to_string(number), 32);
+					int number = board.getCell(row, col);
 
-					if (puzzle.isFixed(row, col))
+					if (number != 0)
 					{
-						text.setFillColor(sf::Color::Black);
-					}
-					else
-					{
-						text.setFillColor(sf::Color::Blue);
-					}
-					
+						sf::Text text(font, std::to_string(number), 32);
 
-					text.setPosition(sf::Vector2f(startX + col * cellSize + 24, startY + row * cellSize + 16));
+						if (puzzle.isFixed(row, col))
+						{
+							text.setFillColor(sf::Color::Black);
+						}
+						else
+						{
+							text.setFillColor(sf::Color::Blue);
+						}
 
-					window.draw(text);
+
+						text.setPosition(sf::Vector2f(startX + col * cellSize + 24, startY + row * cellSize + 16));
+
+						window.draw(text);
+					}
+
 				}
-				
+
 			}
-			
 		}
 
 		for (int i = 0; i <= 9; i++)
