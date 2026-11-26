@@ -2,6 +2,7 @@
 #include <optional>
 #include <cstdlib>
 #include <string>
+#include <ctime>
 #include "SudokuBoard.h"
 #include "SudokuChecker.h"
 #include "SudokuPuzzle.h"
@@ -11,6 +12,8 @@ int main()
 	SudokuBoard board;
 	SudokuChecker checker;
 	SudokuPuzzle puzzle;
+
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	int puzzleChoice = rand() % 3;
 	puzzle.createPuzzle(board, puzzleChoice);
@@ -22,7 +25,7 @@ int main()
 		return -1;
 	}
 
-	sf::RenderWindow window(sf::VideoMode({ 800u, 800u }), "Sudoku Game");
+	sf::RenderWindow window(sf::VideoMode({ 800u, 900u }), "Sudoku Game");
 
 	const float cellSize = 70.0f;
 	const float boardSize = cellSize * 9;
@@ -34,6 +37,7 @@ int main()
 	int selectedCol = -1;
 
 	std::string gameMessage = "Select a cell and enter a number.";
+	
 
 	while (window.isOpen())
 	{
@@ -193,10 +197,15 @@ int main()
 
 		messageText.setFillColor(sf::Color::Black);
 
-		messageText.setPosition(sf::Vector2f(100, 750));
+		messageText.setPosition(sf::Vector2f(100, 790));
 
 		window.draw(messageText);
 
+		sf::Text controlsText(font, "R = Reset | S = Save | L = Load | Delete = Erase", 20);
+		controlsText.setPosition({ 100.f, 830.f });
+		controlsText.setFillColor(sf::Color::Blue);
+
+		window.draw(controlsText);
 		window.display();
 	}
 	return 0;
