@@ -13,11 +13,21 @@ int main()
 	SudokuChecker checker;
 	SudokuPuzzle puzzle;
 
-	srand(static_cast<unsigned int>(time(nullptr)));
+	//srand(static_cast<unsigned int>(time(nullptr)));
 
-	int puzzleChoice = rand() % 3;
-	puzzle.createPuzzle(board, puzzleChoice);
-	
+	//int puzzleChoice = rand() % 3;
+	//puzzle.createPuzzle(board, puzzleChoice);
+	int puzzleChoice = 0;
+
+	if (!puzzle.generateCompleteBoard(board, puzzleChoice))
+	{
+		return -1;
+	}
+
+	puzzle.removeNumbers(board, puzzleChoice);
+
+	SudokuBoard startingBoard = board;
+
 	sf::Font font;
 	
 	if (!font.openFromFile("arial.ttf"))
@@ -67,7 +77,7 @@ int main()
 			{
 				if (keyPressed->code == sf::Keyboard::Key::R)
 				{
-					puzzle.createPuzzle(board, puzzleChoice);
+					board = startingBoard;
 					selectedRow = -1;
 					selectedCol = -1;
 					gameMessage = "Puzzle reset.";
@@ -75,13 +85,13 @@ int main()
 
 				if (keyPressed->code == sf::Keyboard::Key::S)
 				{
-					puzzle.savePuzzle(board, puzzleChoice);
+					puzzle.savePuzzle(board, startingBoard,puzzleChoice);
 					gameMessage = "Game saved successfully.";
 				}
 
 				if (keyPressed->code == sf::Keyboard::Key::L)
 				{
-					if (puzzle.loadPuzzle(board, puzzleChoice))
+					if (puzzle.loadPuzzle(board, startingBoard,puzzleChoice))
 					{
 						gameMessage = "Game loaded successfully.";
 						selectedRow = -1;
@@ -106,20 +116,16 @@ int main()
 				{
 					if (!puzzle.isFixed(selectedRow, selectedCol))
 					{
-						if (checker.isValidMove(board, selectedRow, selectedCol, number))
-						{
-							board.setCell(selectedRow, selectedCol, number);
-							gameMessage = "Move accepted.";
+						board.setCell(selectedRow, selectedCol, number);
+						gameMessage = "Number entered.";
 
-							if (checker.isBoardCompleted(board))
-							{
-								gameMessage = "You completed the game! Hip, Hip, Hurray!! You did it!!!!";
-							}
+						if (!checker.isValidMove(board, selectedRow, selectedCol, number))
+						{
+							gameMessage = "The Checker Assistant found a conflict. You can change it.";
 						}
-
-						else
+						else if (checker.isBoardCompleted(board))
 						{
-							gameMessage = "Invalid move. Pick another number.";
+							gameMessage = "You completed the game! Hip, Hip, Hurray!! You did it!!!!";
 						}
 					}
 
@@ -149,11 +155,28 @@ int main()
 
 		if (selectedRow != -1 && selectedCol != -1)
 		{
+			sf::RectangleShape rowHighlight(sf::Vector2f(boardSize, cellSize));
+
+			rowHighlight.setPosition(sf::Vector2f(startX, startY + selectedRow * cellSize));
+
+			rowHighlight.setFillColor(sf::Color(220, 235, 255));
+
+			window.draw(rowHighlight);
+
+			sf::RectangleShape colHighlight(sf::Vector2f(cellSize, boardSize));
+
+			colHighlight.setPosition(sf::Vector2f(startX + selectedCol * cellSize, startY));
+
+			colHighlight.setFillColor(sf::Color(220, 235, 255));
+
+			window.draw(colHighlight);
+
+
 			sf::RectangleShape highlight(sf::Vector2f(cellSize, cellSize));
 
 			highlight.setPosition(sf::Vector2f(startX + selectedCol * cellSize, startY + selectedRow * cellSize));
 
-			highlight.setFillColor(sf::Color(173, 216, 239));
+			highlight.setFillColor(sf::Color(100, 149, 237));
 
 			window.draw(highlight);
 		}
@@ -191,14 +214,14 @@ int main()
 		{
 			float position = i * cellSize;
 			
-			sf::RectangleShape verticalLine(sf::Vector2f(i % 3 == 0 ? 4.0f : 1.5f, boardSize));
+			sf::RectangleShape verticalLine(sf::Vector2f(i % 3 == 0 ? 6.0f : 1.5f, boardSize));
 
 			verticalLine.setPosition(sf::Vector2f(startX + position, startY));
 
 			verticalLine.setFillColor(sf::Color::Black);
 			window.draw(verticalLine);
 
-			sf::RectangleShape horizontalLine(sf::Vector2f(boardSize, i % 3 == 0 ? 4.0f : 1.5f));
+			sf::RectangleShape horizontalLine(sf::Vector2f(boardSize, i % 3 == 0 ? 6.0f : 1.5f));
 
 			horizontalLine.setPosition(sf::Vector2f(startX, startY + position));
 
