@@ -3,9 +3,12 @@
 #include <cstdlib>
 #include <string>
 #include <ctime>
+#include <random>
+#include <vector>
 #include "SudokuBoard.h"
 #include "SudokuChecker.h"
 #include "SudokuPuzzle.h"
+
 
 int main()
 {
@@ -13,10 +16,19 @@ int main()
 	SudokuChecker checker;
 	SudokuPuzzle puzzle;
 
-	//srand(static_cast<unsigned int>(time(nullptr)));
+	sf::Color backgroundColor(240, 240, 240);
 
-	//int puzzleChoice = rand() % 3;
-	//puzzle.createPuzzle(board, puzzleChoice);
+	std::random_device rd;
+	std::mt19937 colorGenerator(rd());
+	std::uniform_int_distribution<int> colorValue(80, 230);
+
+	std::vector<SudokuBoard> boardHistory;
+
+	auto setRandomBackgroundColor = [&]()
+	{
+		backgroundColor = sf::Color(colorValue(colorGenerator), colorValue(colorGenerator), colorValue(colorGenerator));
+	};
+
 	int puzzleChoice = -1;
 
 	bool showDifficultyScreen = true;
@@ -31,6 +43,9 @@ int main()
 	}
 
 	sf::RenderWindow window(sf::VideoMode({ 800u, 900u }), "Sudoku Game");
+
+	sf::View gameView(sf::FloatRect({ 0.f, 0.f }, { 800.f, 900.f }));
+	window.setView(gameView);
 
 	sf::RectangleShape easyButton(sf::Vector2f(180.f, 60.f));
 	easyButton.setPosition({ 100.f, 500.f });
@@ -56,11 +71,11 @@ int main()
 	hardText.setFillColor(sf::Color::White);
 	hardText.setPosition({ 580.f, 515.f });
 
-	const float cellSize = 70.0f;
-	const float boardSize = cellSize * 9;
+	float cellSize = 70.0f;
+	float boardSize = cellSize * 9;
 
-	const float startX = (800.0f - boardSize) / 2;
-	const float startY = (800.0f - boardSize) / 2;
+	float startX = (800.0f - boardSize) / 2;
+	float startY = (800.0f - boardSize) / 2;
 
 	int selectedRow = -1;
 	int selectedCol = -1;
@@ -72,6 +87,22 @@ int main()
 	{
 		while (const std::optional event = window.pollEvent())
 		{
+			if (const auto* resized = event->getIf<sf::Event::Resized>())
+			{
+				float windowWidth = static_cast<float>(resized->size.x);
+				float windowHeight = static_cast<float>(resized->size.y);
+
+				gameView.setSize({ windowWidth, windowHeight });
+				gameView.setCenter({windowWidth / 2.0f, windowHeight / 2.0f});
+				window.setView(gameView);
+
+				cellSize = std::min(windowWidth / 11.0f, windowHeight / 13.0f);
+				boardSize = cellSize * 9;
+
+				startX = (windowWidth - boardSize) / 2;
+				startY = (windowHeight - boardSize) / 2;
+			}
+
 			if (event->is<sf::Event::Closed>())
 			{
 				window.close();
@@ -79,8 +110,13 @@ int main()
 
 			if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
 			{
-				int mouseX = mousePressed->position.x;
-				int mouseY = mousePressed->position.y;
+				sf::Vector2i mousePosition = mousePressed->position;
+
+				sf::Vector2f worldPosition =
+					window.mapPixelToCoords(mousePosition);
+
+				int mouseX = static_cast<int>(worldPosition.x);
+				int mouseY = static_cast<int>(worldPosition.y);
 
 				if (showDifficultyScreen)
 				{
@@ -108,6 +144,7 @@ int main()
 
 						puzzle.removeNumbers(board, puzzleChoice);
 						startingBoard = board;
+						setRandomBackgroundColor();
 						showDifficultyScreen = false;
 						gameMessage = "Puzzle started!";
 					}
@@ -151,6 +188,7 @@ int main()
 
 						puzzle.removeNumbers(board, puzzleChoice);
 						startingBoard = board;
+						setRandomBackgroundColor();
 						showDifficultyScreen = false;
 						gameMessage = "Puzzle started.";
 					}
@@ -187,6 +225,25 @@ int main()
 						}
 
 					}
+
+					if (keyPressed->code == sf::Keyboard::Key::U)
+					{
+						if (!boardHistory.empty())
+						{
+							board = boardHistory.back();
+							boardHistory.pop_back();
+
+							selectedRow = -1;
+							selectedCol = -1;
+
+							gameMessage = "Move undone.";
+						}
+
+						else
+						{
+							gameMessage = "No moves to undo.";
+						}
+					}
 				}
 
 				int number = -1;
@@ -200,6 +257,8 @@ int main()
 				{
 					if (!puzzle.isFixed(selectedRow, selectedCol))
 					{
+						boardHistory.push_back(board);
+
 						board.setCell(selectedRow, selectedCol, number);
 						gameMessage = "Number entered.";
 
@@ -225,6 +284,8 @@ int main()
 					{
 						if (!puzzle.isFixed(selectedRow, selectedCol))
 						{
+							boardHistory.push_back(board);
+
 							board.setCell(selectedRow, selectedCol, 0);
 							gameMessage = "Cell erased.";
 						}
@@ -235,7 +296,7 @@ int main()
 			}
 		}
 
-		window.clear(sf::Color(240, 240, 240));
+		window.clear(backgroundColor);
 
 		if (showDifficultyScreen)
 		{
@@ -305,7 +366,9 @@ int main()
 
 					if (number != 0)
 					{
-						sf::Text text(font, std::to_string(number), 32);
+						unsigned int numberFontSize = static_cast<unsigned int>(cellSize * 0.55f);
+
+						sf::Text text(font, std::to_string(number), numberFontSize);
 
 						if (puzzle.isFixed(row, col))
 						{
@@ -316,8 +379,12 @@ int main()
 							text.setFillColor(sf::Color::Blue);
 						}
 
+						text.setOrigin(text.getLocalBounds().getCenter());
 
-						text.setPosition(sf::Vector2f(startX + col * cellSize + 24, startY + row * cellSize + 16));
+						text.setPosition({
+							startX + col * cellSize + cellSize / 2.0f,
+							startY + row * cellSize + cellSize / 2.0f
+							});
 
 						window.draw(text);
 					}
@@ -346,7 +413,9 @@ int main()
 			window.draw(horizontalLine);
 		}
 
-		sf::Text messageText(font, gameMessage, 20);
+		unsigned int messageFontSize = static_cast<unsigned int>(cellSize * 0.30f);
+
+		sf::Text messageText(font, gameMessage, messageFontSize);
 
 		messageText.setFillColor(sf::Color::Black);
 
